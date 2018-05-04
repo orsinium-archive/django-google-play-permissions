@@ -1,0 +1,120 @@
+from gpapi.googleplay import GooglePlayAPI, RequestError
+import requests
+from django.conf import settings
+from django.core.signing import Signer, BadSignature
+from .base import Base
+from ..constants import UPPERCASE, GROUPS, NULL_OBJECT_NAME
+from ..models import Permission
+from pathlib import Path
+
+
+signer = Signer(salt='5omeS@lt4S0meMag!ckO.o')
+
+TEMPLATE = """Please, save these credentials into your project settings:
+ANDROID_GSF_ID = '{}'
+ANDROID_AUTH_SUBTOKEN = '{}'
+"""
+
+
+class AndroidAPI(Base):
+    def __init__(self, **credentials):
+        self.connect(**credentials)
+        self.null_object = Permission.objects.get(text=NULL_OBJECT_NAME)
+
+    def connect(self, **credentials):
+        self.api = GooglePlayAPI('en_US', 'Europe/Russia')
+        path = Path('.') / 'credentials.txt'
+
+        # auth by credentials from kwargs
+        if credentials:
+            self.api.login(**credentials)
+            self._write_credentials(path, self.api.gsfId, self.api.authSubToken)
+            return self
+
+        # auth by credentials from settings
+        if hasattr(settings, 'ANDROID_GSF_ID') and hasattr(settings, 'ANDROID_AUTH_SUBTOKEN'):
+            self.api.login(
+                gsfId=settings.ANDROID_GSF_ID,
+                authSubToken=settings.ANDROID_AUTH_SUBTOKEN,
+            )
+            return self
+
+        # auth by credentials from file into app dir
+        if path.exists():
+            data = path.open().read()
+            try:
+                data = signer.unsign(data)
+            except BadSignature:
+                pass
+            else:
+                gsf_id, auth_subtoken = data.split('|')
+                self.api.login(gsfId=gsf_id, authSubToken=auth_subtoken)
+                return self
+
+        # auth by login and password
+        self.api.login(
+            email=settings.ANDROID_EMAIL,
+            password=settings.ANDROID_PASSWORD,
+        )
+        self._write_credentials(path, self.api.gsfId, self.api.authSubToken)
+        return self
+
+    @staticmethod
+    def _write_credentials(path, gsf_id, auth_subtoken):
+        """Write credentials into console and file
+        """
+        # print data into console
+        print(TEMPLATE.format(gsf_id, auth_subtoken))
+        # sign and save into file
+        data = signer.sign(gsf_id + '|' + auth_subtoken)
+        return path.open('w').write(data)
+
+    def download(self, app_id, language=None):
+        path = 'details?doc={}'.format(requests.utils.quote(app_id))
+        response = self.api.executeRequestApi2(path)
+        permissions = response.payload.detailsResponse.docV2.details.appDetails.permission
+        return [self.get_object(name) for name in permissions]
+
+    def get_object(self, name):
+        obj, _created = Permission.objects.get_or_create(
+            text=self.format_name(name),
+            defaults=dict(
+                parent=self.get_parent(name) or self.null_object,
+            ),
+        )
+        return obj
+
+    @staticmethod
+    def format_name(name):
+        # android.permissions.BLUETOOTH_ADMIN -> BLUETOOTH_ADMIN
+        name = name.rsplit('.', 1)[-1]
+        # BLUETOOTH_ADMIN -> bluetooth admin
+        name = name.lower().replace('_', ' ')
+        # broadcast sms -> broadcast SMS
+        name = ' '.join([UPPERCASE.get(word, word) for word in name.split()])
+        # broadcast SMS -> Broadcast SMS
+        name = name[0].upper() + name[1:]
+        return name
+
+    @staticmethod
+    def get_parent(name):
+        name = name.rsplit('.', 1)[-1].lower().replace('_', ' ')
+
+        # find by group name
+        for group in GROUPS:
+            if group in name:
+                return Permission.objects.get(text__iexact=group)
+
+        # find by aliases
+        for word in name.split():
+            for group, aliases in GROUPS.items():
+                if word in aliases:
+                    return Permission.objects.get(text__iexact=group)
+
+    @staticmethod
+    def parse(data):
+        raise NotImplementedError
+
+    def translate(self, objects, language):
+        raise NotImplementedError
+        # translator.translate(src='en', dest=language).text

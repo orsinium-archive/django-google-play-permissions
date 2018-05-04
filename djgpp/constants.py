@@ -24,3 +24,5 @@ UPPERCASE = {
     'mms': 'MMS',
     'WIFI': 'Wi-Fi',
 }
+
+NULL_OBJECT_NAME = 'Other'

@@ -3,7 +3,8 @@ from django.db import models
 
 class Permission(models.Model):
     text = models.TextField()
-    description = models.TextField()
+    description = models.TextField(blank=True, default='')
+    # if parent is NULL then permission is category (root permission)
     parent = models.ForeignKey('self', null=True)
 
 
