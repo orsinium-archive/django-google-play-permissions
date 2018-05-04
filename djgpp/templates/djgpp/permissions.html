@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 
 {% block 'content' %}
-    {% if permissions %}
-        {% for permission in permissions %}
+    {% if groups %}
+        {% for group, permissions in groups.items %}
             <div>
-                {{ permission.text }}
+                <h2>{{ group.text }}</h2>
+                {% for permission in permissions %}
+                    <p>{{ permission.text }}</p>
+                {% endfor %}
             </div>
         {% endfor %}
     {% else %}

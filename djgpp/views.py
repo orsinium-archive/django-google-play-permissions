@@ -2,6 +2,7 @@
 from django.views.generic import FormView
 from .forms import PermissionForm
 from .managers import PermissionManager
+from .utils import group_by_parents
 
 
 class PermissionView(FormView):
@@ -14,5 +15,6 @@ class PermissionView(FormView):
         language = data['hl']
         permission_manager = PermissionManager()
         permissions = permission_manager.get(app_id=app_id, language=language)
-        context = self.get_context_data(form=form, permissions=permissions)
+        groups = group_by_parents(permissions)
+        context = self.get_context_data(form=form, groups=groups)
         return self.render_to_response(context)

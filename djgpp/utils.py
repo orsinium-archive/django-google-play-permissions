@@ -1,5 +1,6 @@
 # built-in
 from functools import partial
+from collections import defaultdict
 
 # external
 import requests
@@ -51,3 +52,13 @@ def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500,
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     return session
+
+
+def group_by_parents(objects):
+    result = defaultdict(list)
+    for obj in objects:
+        if obj.parent:
+            result[obj.parent].append(obj)
+        else:
+            result[obj]
+    return dict(result)
