@@ -53,6 +53,8 @@ class Base(IBase):
         # get from manager
         with override('en'):
             data = self.download(app_id)
+            if not data:
+                return
             objects = self.parse(data)
             self.create_app(app_id, objects)
             return self.translate(objects, language)

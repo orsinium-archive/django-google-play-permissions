@@ -78,7 +78,10 @@ class AndroidAPI(Base):
 
     def download(self, app_id):
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
-        response = self.api.executeRequestApi2(path)
+        try:
+            response = self.api.executeRequestApi2(path)
+        except RequestError:
+            return
         return response.payload.detailsResponse.docV2.details.appDetails.permission
 
     def parse(self, permissions):
