@@ -1,5 +1,6 @@
 # built-in
 import abc
+from itertools import chain
 
 # external
 from googletrans import Translator
@@ -67,11 +68,13 @@ class Base(IBase):
         raise NotImplementedError
 
     def translate(self, objects, language, commit=True):
-        for obj in objects:
+        parents = [obj.parent for obj in objects if obj.parent]
+        for obj in chain(objects, parents):
             field_name = 'text_{}'.format(language)
-            field = getattr(obj, field_name)
-            if not field:
-                field = translator.translate(obj.text_en, src='en', dest=language).text
+            field_value = getattr(obj, field_name)
+            if not field_value:
+                translation = translator.translate(obj.text_en, src='en', dest=language).text
+                setattr(obj, field_name, translation[0].upper() + translation[1:])
                 if commit:
                     obj.save(force_update=True, update_fields=[field_name])
         return objects

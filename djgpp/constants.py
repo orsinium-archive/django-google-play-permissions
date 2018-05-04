@@ -9,7 +9,7 @@ GROUPS = {
     'location': [],
     'microphone': ['audio'],
     # why android manifest doesn't have this category?
-    'network': ['connections', 'wifi', 'bluetooth'],
+    'network': ['connections', 'wifi', 'bluetooth', 'internet'],
     'phone': ['call'],
     'sensors': ['vibrate'],
     'sms': ['mms', 'cell'],

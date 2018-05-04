@@ -1,5 +1,6 @@
 # django
 from django.views.generic import FormView
+from django.utils.translation import activate
 from .forms import PermissionForm
 from .managers import PermissionManager
 from .utils import group_by_parents
@@ -17,4 +18,5 @@ class PermissionView(FormView):
         permissions = permission_manager.get(app_id=app_id, language=language)
         groups = group_by_parents(permissions)
         context = self.get_context_data(form=form, groups=groups)
+        activate(language)
         return self.render_to_response(context)
