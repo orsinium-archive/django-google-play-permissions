@@ -35,14 +35,17 @@ class Command(BaseCommand):
         soup = bs4.BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table', id='constants')
         # save
+        permissions = []
         for element in table.find_all('td')[1::2]:
-            Permission.objects.get_or_create(
+            permission, _created = Permission.objects.get_or_create(
                 text=cls.manager.format_name(element.find('code').text),
                 defaults=dict(
                     parent=cls.manager.get_parent(element.find('code').text),
                     description=' '.join(element.find('p').text.split()),
                 )
             )
+            permissions.append(permission)
+        return permissions
 
     def handle(self, *args, **options):
         self.create_groups()
