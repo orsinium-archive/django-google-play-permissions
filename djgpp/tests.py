@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .management.commands.retrieve_permissions import Command
+from .managers.android_api import AndroidAPI
 
 
 class TestPermissionsRetrieve(TestCase):
@@ -25,3 +26,17 @@ class TestPermissionsRetrieve(TestCase):
                 break
         else:
             self.assertTrue(False)  # permission not found
+
+
+class TestAndroidAPI(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Command.create_groups()
+        Command.create_permissions()
+        return super(TestAndroidAPI, cls).setUpClass()
+
+    def setUp(self):
+        self.manager = AndroidAPI()
+
+    def test_download(self):
+        ...

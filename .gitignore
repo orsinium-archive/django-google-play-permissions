@@ -5,3 +5,4 @@ notebooks/
 *.egg-info
 *.sqlite3
 credentials.txt
+local.py

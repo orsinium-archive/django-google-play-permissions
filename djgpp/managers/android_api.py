@@ -11,7 +11,7 @@ from pathlib import Path
 signer = Signer(salt='5omeS@lt4S0meMag!ckO.o')
 
 TEMPLATE = """Please, save these credentials into your project settings:
-ANDROID_GSF_ID = '{}'
+ANDROID_GSF_ID = {}
 ANDROID_AUTH_SUBTOKEN = '{}'
 """
 
@@ -32,7 +32,7 @@ class AndroidAPI(Base):
             return self
 
         # auth by credentials from settings
-        if hasattr(settings, 'ANDROID_GSF_ID') and hasattr(settings, 'ANDROID_AUTH_SUBTOKEN'):
+        if getattr(settings, 'ANDROID_GSF_ID', ''):
             self.api.login(
                 gsfId=settings.ANDROID_GSF_ID,
                 authSubToken=settings.ANDROID_AUTH_SUBTOKEN,
@@ -48,7 +48,7 @@ class AndroidAPI(Base):
                 pass
             else:
                 gsf_id, auth_subtoken = data.split('|')
-                self.api.login(gsfId=gsf_id, authSubToken=auth_subtoken)
+                self.api.login(gsfId=int(gsf_id), authSubToken=auth_subtoken)
                 return self
 
         # auth by login and password
@@ -66,13 +66,15 @@ class AndroidAPI(Base):
         # print data into console
         print(TEMPLATE.format(gsf_id, auth_subtoken))
         # sign and save into file
-        data = signer.sign(gsf_id + '|' + auth_subtoken)
+        data = signer.sign(str(gsf_id) + '|' + auth_subtoken)
         return path.open('w').write(data)
 
     def download(self, app_id, language=None):
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
         response = self.api.executeRequestApi2(path)
-        permissions = response.payload.detailsResponse.docV2.details.appDetails.permission
+        return response.payload.detailsResponse.docV2.details.appDetails.permission
+
+    def parse(self, permissions):
         return [self.get_object(name) for name in permissions]
 
     def get_object(self, name):
@@ -110,10 +112,6 @@ class AndroidAPI(Base):
             for group, aliases in GROUPS.items():
                 if word in aliases:
                     return Permission.objects.get(text__iexact=group)
-
-    @staticmethod
-    def parse(data):
-        raise NotImplementedError
 
     def translate(self, objects, language):
         raise NotImplementedError
