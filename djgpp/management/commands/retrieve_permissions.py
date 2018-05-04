@@ -12,17 +12,21 @@ class Command(BaseCommand):
 
     @classmethod
     def create_groups(cls):
+        groups = []
         # create groups
-        for group in GROUPS:
-            Permission.objects.get_or_create(
-                text=cls.manager.format_name(group),
+        for name in GROUPS:
+            group, _created = Permission.objects.get_or_create(
+                text=cls.manager.format_name(name),
                 parent=None,
             )
+            groups.append(group)
         # create null group
-        Permission.objects.get_or_create(
+        group, _created = Permission.objects.get_or_create(
             text=cls.manager.format_name(NULL_OBJECT_NAME),
             parent=None,
         )
+        groups.append(group)
+        return groups
 
     @classmethod
     def create_permissions(cls):

@@ -2,6 +2,6 @@ django
 googletrans
 gpapi
 modeltranslation
-python3-bs4
+bs4
 requests
 selenium
