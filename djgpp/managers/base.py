@@ -68,10 +68,10 @@ class Base(IBase):
 
     def translate(self, objects, language, commit=True):
         for obj in objects:
-            field_name = 'name_{}'.format(language)
+            field_name = 'text_{}'.format(language)
             field = getattr(obj, field_name)
             if not field:
-                field = translator.translate(obj.name_en, src='en', dest=language).text
+                field = translator.translate(obj.text_en, src='en', dest=language).text
                 if commit:
                     obj.save(force_update=True, update_fields=[field_name])
         return objects

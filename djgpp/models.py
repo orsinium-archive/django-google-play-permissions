@@ -1,5 +1,6 @@
 # django
 from django.db import models
+from django.conf import settings
 
 
 class Permission(models.Model):
@@ -7,6 +8,12 @@ class Permission(models.Model):
     description = models.TextField(blank=True, default='')
     # if parent is NULL then permission is category (root permission)
     parent = models.ForeignKey('self', null=True)
+
+    def get_icon_url(self):
+        if not self.parent:
+            return
+        slug = self.name.lower.replace(' ', '_')
+        return '{}djgpp/{}.png'(settings.STATIC_URL, slug)
 
 
 class App(models.Model):

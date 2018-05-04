@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block 'content' %}
+    {% if permissions %}
+        {% for permission in permissions %}
+            <div>
+                {{ permission.text }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="show" />
+        </form>
+    {% endif %}
+{% endblock %}
