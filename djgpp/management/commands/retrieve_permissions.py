@@ -1,9 +1,14 @@
+# external
+import bs4
+import requests
+
+# django
 from django.core.management import BaseCommand
+
+# app
 from ...constants import GROUPS, NULL_OBJECT_NAME
 from ...managers.android_api import AndroidAPI
 from ...models import Permission
-import requests
-import bs4
 
 
 class Command(BaseCommand):

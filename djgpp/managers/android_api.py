@@ -1,11 +1,18 @@
-from gpapi.googleplay import GooglePlayAPI, RequestError
-import requests
-from django.conf import settings
-from django.core.signing import Signer, BadSignature
-from .base import Base
-from ..constants import UPPERCASE, GROUPS, NULL_OBJECT_NAME
-from ..models import Permission
+# built-in
 from pathlib import Path
+
+# external
+import requests
+from gpapi.googleplay import GooglePlayAPI, RequestError
+
+# django
+from django.conf import settings
+from django.core.signing import BadSignature, Signer
+
+# app
+from ..constants import GROUPS, NULL_OBJECT_NAME, UPPERCASE
+from ..models import Permission
+from .base import Base
 
 
 signer = Signer(salt='5omeS@lt4S0meMag!ckO.o')

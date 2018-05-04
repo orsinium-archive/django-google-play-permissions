@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+# external
+from setuptools import find_packages, setup
 
 
 setup(

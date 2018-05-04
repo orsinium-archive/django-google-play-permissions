@@ -1,9 +1,14 @@
+# built-in
+from functools import partial
+
+# external
 import requests
+from modeltranslation.admin import TranslationAdmin as _TranslationAdmin
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+
+# django
 from django.conf import settings
-from functools import partial
-from modeltranslation.admin import TranslationAdmin as _TranslationAdmin
 
 
 def get_field_translations(obj, field):

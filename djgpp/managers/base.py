@@ -1,5 +1,10 @@
+# built-in
 import abc
+
+# external
 from googletrans import Translator
+
+# app
 from ..utils import requests_retry_session
 
 

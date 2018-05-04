@@ -1,7 +1,10 @@
+# django
 from django.contrib import admin
-from .utils import TranslationAdmin
+
+# app
 from .models import Permission
 from .translation import PermissionTO
+from .utils import TranslationAdmin
 
 
 class PermissionAdmin(TranslationAdmin):

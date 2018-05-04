@@ -1,4 +1,7 @@
+# django
 from django.test import TestCase
+
+# app
 from .management.commands.retrieve_permissions import Command
 from .managers.android_api import AndroidAPI
 

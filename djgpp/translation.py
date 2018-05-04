@@ -1,4 +1,7 @@
+# external
 from modeltranslation.translator import TranslationOptions, translator
+
+# app
 from .models import Permission
 
 
