@@ -11,5 +11,13 @@
     ```
 1. Run containers:
     ```bash
-    docker-compose run up -d
+    docker-compose up -d
     ```
+
+## Run tests
+
+Set up credentials like in [Run example](#run-example) and run Django tests:
+
+```bash
+docker-compose run project python manage.py test djgpp
+```

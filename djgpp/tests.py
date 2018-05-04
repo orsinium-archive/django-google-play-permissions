@@ -39,4 +39,21 @@ class TestAndroidAPI(TestCase):
         self.manager = AndroidAPI()
 
     def test_download(self):
-        ...
+        permissions = self.manager.download('org.telegram.messenger')
+        self.assertIn('android.permission.ACCESS_COARSE_LOCATION', permissions)
+        self.assertIn('com.oppo.launcher.permission.READ_SETTINGS', permissions)
+
+    def test_parse(self):
+        data = self.manager.download('org.telegram.messenger')
+        permissions = self.manager.parse(data)
+        names = [permission.text for permission in permissions]
+        self.assertIn('Read settings', names)
+        self.assertIn('Receive SMS', names)
+
+        # check parents
+        for permission in permissions:
+            if permission.text == 'Receive SMS':
+                self.assertEqual(permission.parent.text, 'SMS')
+                break
+        else:
+            self.assertTrue(False)  # permission not found
