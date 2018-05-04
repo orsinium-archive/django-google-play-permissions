@@ -1,0 +1,6 @@
+notebooks/
+*.pyc
+*.log
+*.db
+credentials.txt
+
