@@ -1,2 +1,3 @@
-from .base import *
-from .local import *
+from .base import *             # noQA
+from .translations import *     # noQA
+from .local import *            # noQA
