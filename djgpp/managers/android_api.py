@@ -85,7 +85,12 @@ class AndroidAPI(Base):
         return response.payload.detailsResponse.docV2.details.appDetails.permission
 
     def parse(self, permissions):
-        return [self.get_object(name) for name in permissions]
+        result = []
+        for name in permissions:
+            # get only android related permissions
+            if name.startswith('android.permission.') or name.startswith('com.android.'):
+                result.append(self.get_object(name))
+        return result
 
     def get_object(self, name):
         obj, _created = Permission.objects.get_or_create(

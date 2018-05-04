@@ -50,7 +50,7 @@ class TestAndroidAPI(TestCase):
         data = self.manager.download('org.telegram.messenger')
         permissions = self.manager.parse(data)
         names = [permission.text for permission in permissions]
-        self.assertIn('Read settings', names)
+        self.assertIn('Wake lock', names)
         self.assertIn('Receive SMS', names)
 
         # check parents
