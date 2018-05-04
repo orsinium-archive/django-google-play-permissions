@@ -4,7 +4,11 @@ import abc
 # external
 from googletrans import Translator
 
+# django
+from django.utils.translation import override
+
 # app
+from ..models import App
 from ..utils import requests_retry_session
 
 
@@ -40,9 +44,18 @@ class Base(IBase):
         self.api = requests_retry_session()
 
     def get(self, app_id, language='en'):
-        data = self.download(app_id, language)
-        objects = self.parse(data)
-        return self.translate(objects, language)
+        # get from database
+        app = App.objects.filter(gplay_id=app_id).first()
+        if app:
+            objects = list(app.permissions.all())
+            return self.translate(objects, language)
+
+        # get from manager
+        with override('en'):
+            data = self.download(app_id)
+            objects = self.parse(data)
+            self.create_app(app_id, objects)
+            return self.translate(objects, language)
 
     def download(self, app_id, language):
         raise NotImplementedError
@@ -51,6 +64,18 @@ class Base(IBase):
     def parse(data):
         raise NotImplementedError
 
-    def translate(self, objects, language):
-        raise NotImplementedError
-        # translator.translate(src='en', dest=language).text
+    def translate(self, objects, language, commit=True):
+        for obj in objects:
+            field_name = 'name_{}'.format(language)
+            field = getattr(obj, field_name)
+            if not field:
+                field = translator.translate(obj.name_en, src='en', dest=language).text
+                if commit:
+                    obj.save(force_update=True, update_fields=[field_name])
+        return objects
+
+    @staticmethod
+    def create_app(app_id, permissions):
+        app = App.objects.create(gplay_id=app_id)
+        app.permissions.add(*permissions)
+        return app

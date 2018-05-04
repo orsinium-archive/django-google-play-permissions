@@ -1,7 +1,7 @@
 django
 googletrans
 gpapi
-modeltranslation
+django-modeltranslation
 bs4
 requests
 selenium

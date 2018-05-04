@@ -76,7 +76,7 @@ class AndroidAPI(Base):
         data = signer.sign(str(gsf_id) + '|' + auth_subtoken)
         return path.open('w').write(data)
 
-    def download(self, app_id, language=None):
+    def download(self, app_id):
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
         response = self.api.executeRequestApi2(path)
         return response.payload.detailsResponse.docV2.details.appDetails.permission
@@ -119,7 +119,3 @@ class AndroidAPI(Base):
             for group, aliases in GROUPS.items():
                 if word in aliases:
                     return Permission.objects.get(text__iexact=group)
-
-    def translate(self, objects, language):
-        raise NotImplementedError
-        # translator.translate(src='en', dest=language).text
