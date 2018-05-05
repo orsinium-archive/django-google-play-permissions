@@ -54,7 +54,7 @@ class MobileAPI(WebBase):
         """
         obj, _created = Permission.objects.get_or_create(
             text=self.format_name(name),
-            defaults=dict(description=description),
+            defaults=dict(description=description, parent=None),
         )
         return obj
 

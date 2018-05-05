@@ -116,12 +116,12 @@ class WebBase(Base):
             parent=None,
         )
         # get object
-        obj, created = Permission.objects.get_or_create(
+        obj, _created = Permission.objects.get_or_create(
             text=self.format_name(name),
             defaults=dict(parent=parent),
         )
         # set parent if it is not set
-        if not created and not obj.parent:
+        if not obj.parent:
             obj.parent = parent
             obj.save(force_update=True, update_fields=['parent_id'])
         return obj
