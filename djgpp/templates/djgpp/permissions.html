@@ -4,13 +4,13 @@
   {% if groups %}
     {% for group, permissions in groups.items %}
       <div>
-        <h2>{{ group.text }}</h2>
+        <h2>{{ group.translation.name }}</h2>
         {% for permission in permissions %}
           <p>
-            {{ permission.text }}
-            {% if permission.description %}
+            {{ permission.translation.name }}
+            {% if permission.translation.description %}
               <br/>
-              {{ permission.description }}
+              {{ permission.translation.description }}
             {% endif %}
           </p>
         {% endfor %}

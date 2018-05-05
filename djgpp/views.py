@@ -1,4 +1,5 @@
 # django
+from django.utils.translation import activate
 from django.views.generic import FormView
 
 # app
@@ -17,4 +18,5 @@ class PermissionView(FormView):
         controller = PermissionController()
         groups = controller.get(app_id=app_id, language=language)
         context = self.get_context_data(form=form, groups=groups)
+        activate(language)
         return self.render_to_response(context)

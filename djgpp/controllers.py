@@ -1,9 +1,14 @@
 from collections import defaultdict, OrderedDict
+from functools import lru_cache
 import requests
 import json
+from googletrans import Translator
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from .models import Permission, Translation, App
+
+
+translator = Translator()
 
 
 class PermissionController(object):
@@ -46,7 +51,7 @@ class PermissionController(object):
     def get(self, app_id, language='en'):
         result = self.get_from_database(app_id, language)
         if result:
-            return self.sort(result)
+            return self.sort(result, language)
 
         names = self.get_names(app_id)
         names_tr = self.get_names(app_id, language)
@@ -55,7 +60,7 @@ class PermissionController(object):
         groups_tr = self.get_groups(app_id, language)
 
         result = self.combine(names, names_tr, groups, groups_tr, language)
-        return self.sort(result)
+        return self.sort(result, language)
 
     @staticmethod
     def get_from_database(app_id, language='en'):
@@ -122,46 +127,62 @@ class PermissionController(object):
         return result
 
     @staticmethod
-    def combine(names, names_tr, groups, groups_tr, language):
+    @lru_cache(maxsize=8)
+    def translate(text, language):
+        return translator.translate(text, src='en', dest=language).text
+
+    @classmethod
+    def combine(cls, names, names_tr, groups, groups_tr, language):
         result = defaultdict(list)
         for (name, descr), (name_tr, descr_tr) in zip(names, names_tr):
             # get group
-            group = Permission.objects.filter(name=groups[name]).first()
+            group_name = groups.get(name, 'Other')
+            group = Permission.objects.filter(name=group_name).first()
             if not group:
-                group_tr = Translation.objects.create(
-                    name=groups_tr[name],
-                    description='',
-                )
                 group = Permission.objects.create(
-                    name=groups[name],
-                    translation=group_tr,
+                    name=group_name,
+                )
+            if not group.translation_set.filter(language=language):
+                group_name_tr = groups_tr.get(name)
+                if not group_name_tr:
+                    group_name_tr = cls.translate(group_name, language)
+                Translation.objects.create(
+                    language=language,
+                    name=group_name_tr,
+                    description='',
+                    permission=group,
                 )
 
             # get permission
             obj = Permission.objects.filter(name=name).first()
             if not obj:
-                obj_tr = Translation.objects.create(
+                obj = Permission.objects.create(
+                    name=name,
+                    parent=group,
+                )
+            if not obj.translation_set.filter(language=language):
+                Translation.objects.create(
+                    language=language,
                     name=name_tr,
                     description=descr_tr,
-                )
-                group = Permission.objects.create(
-                    name=name,
-                    translation=obj_tr,
-                    parent=group,
+                    permission=obj,
                 )
 
             result[group].append(obj)
         return result
 
     @staticmethod
-    def sort(data, language):
+    def sort(data, language='en'):
         def key(obj):
             if obj.name == 'Other':
-                return b'\xffff'
-            return obj.translation_set.filter(language=language).first()
+                return '\xffff'
+            obj = obj.translation_set.filter(language=language).first()
+            if not obj:
+                return ''
+            return obj.name
 
         # sort groups
-        data = OrderedDict(sorted(data.items(), key=key))
+        data = OrderedDict(sorted(data.items(), key=lambda x: key(x[0])))
         # sort permissions
         for k, v in data.items():
             v.sort(key=key)
