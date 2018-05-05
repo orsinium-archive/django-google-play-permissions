@@ -5,6 +5,7 @@ from django.test import TestCase
 from .management.commands.retrieve_permissions import Command
 from .managers.android_api import AndroidAPI
 from .managers.web_api import WebAPI
+from .managers.mobile_api import MobileAPI
 from .managers.web_interface import WebInterface
 
 
@@ -124,3 +125,23 @@ class TestWebAPI(TestCase):
                 break
         else:
             self.assertTrue(False)  # permission not found
+
+
+class TestMobileAPI(TestCase):
+    def setUp(self):
+        self.manager = MobileAPI()
+
+    def test_download(self):
+        permissions = self.manager.download('org.telegram.messenger')
+        block = [
+            'add or remove accounts',
+            ('Allows the app to perform operations like adding and removing accounts, '
+             'and deleting their password.'),
+        ]
+        self.assertIn(block, permissions)
+
+    def test_parse(self):
+        data = self.manager.download('org.telegram.messenger')
+        permissions = self.manager.parse(data)
+        names = [permission.text for permission in permissions]
+        self.assertIn('Receive text messages (SMS)', names)

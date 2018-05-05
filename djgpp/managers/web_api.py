@@ -10,7 +10,7 @@ URL = 'https://play.google.com/_/PlayStoreUi/data'
 
 
 class WebAPI(WebBase):
-    def download(self, app_id, language='en'):
+    def download(self, app_id):
         """Get and extract permissions from server.
         """
         response = self.api.post(

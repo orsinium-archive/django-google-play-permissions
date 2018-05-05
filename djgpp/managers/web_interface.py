@@ -21,7 +21,7 @@ class WebInterface(WebBase):
         """
         self.api = webdriver.PhantomJS()
 
-    def download(self, app_id, language='en'):
+    def download(self, app_id):
         """Get permissions list from app page on google play.
 
         1. Go to app page.
@@ -33,15 +33,18 @@ class WebInterface(WebBase):
         # click on button
         element = self.api.find_element_by_link_text(BUTTON)
         if not element:
+            self.api.save_screenshot('page.png')
             logger.error('WebInterface: button not found.')
             return
         if element.get_property('text') != 'View details':
+            self.api.save_screenshot('page.png')
             logger.error('WebInterface: invalid button.')
             return
         element.click()
         # select alert window
         windows = self.api.find_elements_by_xpath('//body/div[4]/div/div[2]/content/*/div')
         if not windows:
+            self.api.save_screenshot('page.png')
             logger.error('WebInterface: alert window not found.')
             return
         # iterate by lines

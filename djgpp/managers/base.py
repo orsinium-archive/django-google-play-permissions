@@ -61,25 +61,26 @@ class Base(IBase):
 
         # get from manager
         with override('en'):
-            data = self.download(app_id, language)
+            data = self.download(app_id)
             if not data:
                 return
             objects = self.parse(data)
             self.create_app(app_id, objects)
-            return self.translate(objects, language)
+            return self.translate(app_id, objects, language)
 
-    def translate(self, objects, language, commit=True):
+    def translate(self, app_id, objects, language, commit=True):
         """Translate permission objects list to language (if not translated)
         """
         parents = [obj.parent for obj in objects if obj.parent]
         for obj in chain(objects, parents):
             field_name = 'text_{}'.format(language)
             field_value = getattr(obj, field_name)
-            if not field_value:
-                translation = translator.translate(obj.text_en, src='en', dest=language).text
-                setattr(obj, field_name, translation[0].upper() + translation[1:])
-                if commit:
-                    obj.save(force_update=True, update_fields=[field_name])
+            if field_value:
+                continue
+            translation = translator.translate(obj.text_en, src='en', dest=language).text
+            setattr(obj, field_name, translation[0].upper() + translation[1:])
+            if commit:
+                obj.save(force_update=True, update_fields=[field_name])
         return objects
 
     @staticmethod
@@ -109,14 +110,20 @@ class WebBase(Base):
     def get_object(self, name, group_name):
         """Get or create object by name and it's group.
         """
+        # get parent
         parent, _created = Permission.objects.get_or_create(
             text=self.format_name(group_name),
             parent=None,
         )
-        obj, _created = Permission.objects.get_or_create(
+        # get object
+        obj, created = Permission.objects.get_or_create(
             text=self.format_name(name),
             defaults=dict(parent=parent),
         )
+        # set parent if it is not set
+        if not created and not obj.parent:
+            obj.parent = parent
+            obj.save(force_update=True, update_fields=['parent_id'])
         return obj
 
     def format_name(self, name):

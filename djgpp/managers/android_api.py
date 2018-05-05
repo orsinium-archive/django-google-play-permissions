@@ -88,7 +88,7 @@ class AndroidAPI(Base):
         data = signer.sign(str(gsf_id) + '|' + auth_subtoken)
         return path.open('w').write(data)
 
-    def download(self, app_id, language='en'):
+    def download(self, app_id):
         """Get permissions list from API
         """
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
