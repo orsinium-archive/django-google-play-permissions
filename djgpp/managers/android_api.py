@@ -31,7 +31,7 @@ class AndroidAPI(Base):
 
     def connect(self, **credentials):
         """Get credentials and log-in to Google account.
-        
+
         1. Try get credentials from kwargs.
         2. Try get credentials from settings (gsfId and authSubToken).
         3. Try get credentials from credentials.txt (gsfId and authSubToken).
@@ -88,7 +88,7 @@ class AndroidAPI(Base):
         data = signer.sign(str(gsf_id) + '|' + auth_subtoken)
         return path.open('w').write(data)
 
-    def download(self, app_id):
+    def download(self, app_id, language='en'):
         """Get permissions list from API
         """
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
@@ -113,7 +113,7 @@ class AndroidAPI(Base):
         return result
 
     def get_object(self, name):
-        """Get or create 
+        """Get or create
         """
         obj, _created = Permission.objects.get_or_create(
             text=self.format_name(name),

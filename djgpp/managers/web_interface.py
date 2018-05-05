@@ -5,8 +5,7 @@ from logging import getLogger
 from selenium import webdriver
 
 # app
-from ..models import Permission
-from .base import Base
+from .base import WebBase
 
 
 URL_TEMPLATE = 'https://play.google.com/store/apps/details?id={}&hl=en'
@@ -16,13 +15,13 @@ BUTTON = 'View details'
 logger = getLogger('djgpp')
 
 
-class WebInterface(Base):
+class WebInterface(WebBase):
     def connect(self, **credentials):
         """Init PhantomJS driver.
         """
         self.api = webdriver.PhantomJS()
 
-    def download(self, app_id):
+    def download(self, app_id, language='en'):
         """Get permissions list from app page on google play.
 
         1. Go to app page.
@@ -54,32 +53,3 @@ class WebInterface(Base):
             permissions = [permission.strip() for permission in permissions if permission]
             result.append((group, permissions))
         return result[1:]
-
-    def parse(self, data):
-        """Convert permissions names list to Permission objects.
-        """
-        objects = []
-        for group, permissions in data:
-            for name in permissions:
-                objects.append(self.get_object(name, group))
-        return objects
-
-    def get_object(self, name, group_name):
-        """Get or create object by name and it's group.
-        """
-        parent, _created = Permission.objects.get_or_create(
-            text=self.format_name(group_name),
-            parent=None,
-        )
-        obj, _created = Permission.objects.get_or_create(
-            text=self.format_name(name),
-            defaults=dict(parent=parent),
-        )
-        return obj
-
-    def format_name(self, name):
-        """Convert name to right format.
-
-        Just capitalize first letter.
-        """
-        return name[0].upper() + name[1:]

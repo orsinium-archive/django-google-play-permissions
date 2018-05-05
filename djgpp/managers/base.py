@@ -9,7 +9,8 @@ from googletrans import Translator
 from django.utils.translation import override
 
 # app
-from ..models import App
+from ..models import App, Permission
+from ..utils import requests_retry_session
 
 
 translator = Translator()
@@ -60,23 +61,12 @@ class Base(IBase):
 
         # get from manager
         with override('en'):
-            data = self.download(app_id)
+            data = self.download(app_id, language)
             if not data:
                 return
             objects = self.parse(data)
             self.create_app(app_id, objects)
             return self.translate(objects, language)
-
-    def download(self, app_id, language):
-        """Download and extract raw permissions data from server
-        """
-        raise NotImplementedError
-
-    @staticmethod
-    def parse(data):
-        """Convert raw permissions data to Permission objects list
-        """
-        raise NotImplementedError
 
     def translate(self, objects, language, commit=True):
         """Translate permission objects list to language (if not translated)
@@ -99,3 +89,39 @@ class Base(IBase):
         app = App.objects.create(gplay_id=app_id)
         app.permissions.add(*permissions)
         return app
+
+
+class WebBase(Base):
+    def connect(self, **credentials):
+        """Get requests session
+        """
+        self.api = requests_retry_session()
+
+    def parse(self, data):
+        """Convert permissions names list to Permission objects.
+        """
+        objects = []
+        for group, permissions in data:
+            for name in permissions:
+                objects.append(self.get_object(name, group))
+        return objects
+
+    def get_object(self, name, group_name):
+        """Get or create object by name and it's group.
+        """
+        parent, _created = Permission.objects.get_or_create(
+            text=self.format_name(group_name),
+            parent=None,
+        )
+        obj, _created = Permission.objects.get_or_create(
+            text=self.format_name(name),
+            defaults=dict(parent=parent),
+        )
+        return obj
+
+    def format_name(self, name):
+        """Convert name to right format.
+
+        Just capitalize first letter.
+        """
+        return name[0].upper() + name[1:]

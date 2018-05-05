@@ -1,26 +1,16 @@
 # built-in
 import json
 
-# external
-import requests
-
 # app
-from ..models import Permission
-from ..utils import requests_retry_session
-from .base import Base
+from .base import WebBase
 
 
 TEMPLATE = '[[[163726509,[{"163726509":[[null,["$",7],[]]]}],null,null,0]]]'
 URL = 'https://play.google.com/_/PlayStoreUi/data'
 
 
-class WebAPI(Base):
-    def connect(self, **credentials):
-        """Get requests session
-        """
-        self.api = requests_retry_session()
-
-    def download(self, app_id):
+class WebAPI(WebBase):
+    def download(self, app_id, language='en'):
         """Get and extract permissions from server.
         """
         response = self.api.post(
@@ -39,32 +29,3 @@ class WebAPI(Base):
         for group, _info, permissions in (data[0] + data[1])[1:]:
             result.append((group, [p[-1] for p in permissions]))
         return result
-
-    def parse(self, data):
-        """Convert permissions names list to Permission objects.
-        """
-        objects = []
-        for group, permissions in data:
-            for name in permissions:
-                objects.append(self.get_object(name, group))
-        return objects
-
-    def get_object(self, name, group_name):
-        """Get or create object by name and it's group.
-        """
-        parent, _created = Permission.objects.get_or_create(
-            text=self.format_name(group_name),
-            parent=None,
-        )
-        obj, _created = Permission.objects.get_or_create(
-            text=self.format_name(name),
-            defaults=dict(parent=parent),
-        )
-        return obj
-
-    def format_name(self, name):
-        """Convert name to right format.
-
-        Just capitalize first letter.
-        """
-        return name[0].upper() + name[1:]
