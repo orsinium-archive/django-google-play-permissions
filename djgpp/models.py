@@ -9,6 +9,9 @@ class Permission(models.Model):
     # if parent is NULL then permission is category (root permission)
     parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.text
+
     def get_icon_url(self):
         if not self.parent:
             return
@@ -19,3 +22,7 @@ class Permission(models.Model):
 class App(models.Model):
     gplay_id = models.CharField(max_length=32, unique=True)
     permissions = models.ManyToManyField(Permission)
+
+    def __str__(self):
+        return self.gplay_id
+

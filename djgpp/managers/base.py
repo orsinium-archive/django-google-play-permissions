@@ -17,20 +17,29 @@ translator = Translator()
 
 class IBase(metaclass=abc.ABCMeta):
     """Interface for managers.
+
     Any manager MUST provide this interface.
     Any manager CAN NOT provide any other interface.
     """
     @abc.abstractmethod
     def connect(self, app_id, language='en'):
+        """Connect to server
+        """
         pass
 
     @abc.abstractmethod
     def get(self, app_id, language='en'):
+        """Get translated permissions as objects list.
+        """
         pass
 
     @property
     @abc.abstractmethod
     def api(self):
+        """Contain connection
+
+        For example, requests session.
+        """
         pass
 
 
@@ -41,6 +50,8 @@ class Base(IBase):
         self.connect(**credentials)
 
     def get(self, app_id, language='en'):
+        """Get translated permissions as objects list.
+        """
         # get from database
         app = App.objects.filter(gplay_id=app_id).first()
         if app:
@@ -57,13 +68,19 @@ class Base(IBase):
             return self.translate(objects, language)
 
     def download(self, app_id, language):
+        """Download and extract raw permissions data from server
+        """
         raise NotImplementedError
 
     @staticmethod
     def parse(data):
+        """Convert raw permissions data to Permission objects list
+        """
         raise NotImplementedError
 
     def translate(self, objects, language, commit=True):
+        """Translate permission objects list to language (if not translated)
+        """
         parents = [obj.parent for obj in objects if obj.parent]
         for obj in chain(objects, parents):
             field_name = 'text_{}'.format(language)
@@ -77,6 +94,8 @@ class Base(IBase):
 
     @staticmethod
     def create_app(app_id, permissions):
+        """Create app object with permissions into database
+        """
         app = App.objects.create(gplay_id=app_id)
         app.permissions.add(*permissions)
         return app

@@ -18,6 +18,7 @@ GROUPS = {
     'system tools': ['settings', 'uninstall', 'install'],
 }
 
+# Change case for some words (abbrs in common case)
 UPPERCASE = {
     'gps': 'GPS',
     'sms': 'SMS',
@@ -25,4 +26,5 @@ UPPERCASE = {
     'WIFI': 'Wi-Fi',
 }
 
+# "Other" category name.
 NULL_OBJECT_NAME = 'Other'

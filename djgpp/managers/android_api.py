@@ -1,4 +1,5 @@
 # built-in
+import os
 from pathlib import Path
 
 # external
@@ -29,8 +30,19 @@ class AndroidAPI(Base):
         self.null_object = Permission.objects.get(text=NULL_OBJECT_NAME)
 
     def connect(self, **credentials):
+        """Get credentials and log-in to Google account.
+        
+        1. Try get credentials from kwargs.
+        2. Try get credentials from settings (gsfId and authSubToken).
+        3. Try get credentials from credentials.txt (gsfId and authSubToken).
+            This file placed into package dir (for avoid adding into VCS from project)
+            and signed on SECRET_KEY (for avoid sharing between projects).
+        4. Try get credentials from settings (email and password).
+        """
         self.api = GooglePlayAPI('en_US', 'Europe/Russia')
-        path = Path('.') / 'credentials.txt'
+        # save credentials to app (not project) folder
+        path = os.path.dirname(os.path.abspath(__file__))
+        path = Path(path) / 'credentials.txt'
 
         # auth by credentials from kwargs
         if credentials:
@@ -77,6 +89,8 @@ class AndroidAPI(Base):
         return path.open('w').write(data)
 
     def download(self, app_id):
+        """Get permissions list from API
+        """
         path = 'details?doc={}'.format(requests.utils.quote(app_id))
         try:
             response = self.api.executeRequestApi2(path)
@@ -85,6 +99,12 @@ class AndroidAPI(Base):
         return response.payload.detailsResponse.docV2.details.appDetails.permission
 
     def parse(self, permissions):
+        """Convert permissions names list to Permission objects
+
+        1. Iterate over permissions.
+        2. Filter non-android permissions.
+        3. Convert each permission to Permission object.
+        """
         result = []
         for name in permissions:
             # get only android related permissions
@@ -93,6 +113,8 @@ class AndroidAPI(Base):
         return result
 
     def get_object(self, name):
+        """Get or create 
+        """
         obj, _created = Permission.objects.get_or_create(
             text=self.format_name(name),
             defaults=dict(
@@ -103,6 +125,9 @@ class AndroidAPI(Base):
 
     @staticmethod
     def format_name(name):
+        """Convert slug to display name.
+        android.permissions.BROADCAST_SMS -> Broadcast SMS
+        """
         # android.permissions.BLUETOOTH_ADMIN -> BLUETOOTH_ADMIN
         name = name.rsplit('.', 1)[-1]
         # BLUETOOTH_ADMIN -> bluetooth admin
@@ -115,6 +140,8 @@ class AndroidAPI(Base):
 
     @staticmethod
     def get_parent(name):
+        """Get parent for permission by slug (not converted name)
+        """
         name = name.rsplit('.', 1)[-1].lower().replace('_', ' ')
 
         # find by group name

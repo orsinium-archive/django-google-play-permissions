@@ -11,6 +11,8 @@ class PermissionForm(forms.Form):
     url = forms.URLField(label=ugettext_lazy('Aplication URL'))
 
     def clean_url(self):
+        """Extract from url dict of params and set default values.
+        """
         url = self.cleaned_data['url']
         if '?' not in url:
             raise forms.ValidationError(ugettext('Invalid URL'))

@@ -12,15 +12,15 @@ from requests.packages.urllib3.util.retry import Retry
 from django.conf import settings
 
 
+TRANSLATION_TEMPLATE = 'Translations for {}'
+
+
 def get_field_translations(obj, field):
     langs = []
     for lang, _x in settings.LANGUAGES:
         if getattr(obj, '{}_{}'.format(field, lang), None):
             langs.append(lang)
     return u', '.join(langs)
-
-
-TRANSLATION_TEMPLATE = 'Translations for {}'
 
 
 class TranslationAdmin(_TranslationAdmin):
@@ -55,6 +55,8 @@ def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500,
 
 
 def group_by_parents(objects):
+    """Group Permission objects list by parents.
+    """
     result = defaultdict(list)
     for obj in objects:
         if obj.parent:

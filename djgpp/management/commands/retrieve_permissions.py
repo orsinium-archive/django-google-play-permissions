@@ -12,6 +12,14 @@ from ...models import Permission
 
 
 class Command(BaseCommand):
+    """Download and save android apps permissions and groups.
+    
+    This command get:
+    1. groups from constants.
+    2. permissions and descriptions from official documentation.
+    
+    AndroidAPI manager use this data for better results.
+    """
     help = 'Download and save android apps permissions and groups'
     manager = AndroidAPI
 

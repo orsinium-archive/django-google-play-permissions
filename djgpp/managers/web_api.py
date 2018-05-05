@@ -16,9 +16,13 @@ URL = 'https://play.google.com/_/PlayStoreUi/data'
 
 class WebAPI(Base):
     def connect(self, **credentials):
+        """Get requests session
+        """
         self.api = requests_retry_session()
 
     def download(self, app_id):
+        """Get and extract permissions from server.
+        """
         response = self.api.post(
             URL,
             params={'hl': 'en'},
@@ -37,6 +41,8 @@ class WebAPI(Base):
         return result
 
     def parse(self, data):
+        """Convert permissions names list to Permission objects.
+        """
         objects = []
         for group, permissions in data:
             for name in permissions:
@@ -44,6 +50,8 @@ class WebAPI(Base):
         return objects
 
     def get_object(self, name, group_name):
+        """Get or create object by name and it's group.
+        """
         parent, _created = Permission.objects.get_or_create(
             text=self.format_name(group_name),
             parent=None,
@@ -55,4 +63,8 @@ class WebAPI(Base):
         return obj
 
     def format_name(self, name):
+        """Convert name to right format.
+
+        Just capitalize first letter.
+        """
         return name[0].upper() + name[1:]
