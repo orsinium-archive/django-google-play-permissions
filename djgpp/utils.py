@@ -11,6 +11,10 @@ from requests.packages.urllib3.util.retry import Retry
 # django
 from django.conf import settings
 
+# app
+from .constants import NULL_OBJECT_NAME
+from .models import Permission
+
 
 TRANSLATION_TEMPLATE = 'Translations for {}'
 
@@ -57,10 +61,11 @@ def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500,
 def group_by_parents(objects):
     """Group Permission objects list by parents.
     """
+    null_object = Permission.objects.get(text=NULL_OBJECT_NAME)
     result = defaultdict(list)
     for obj in objects:
         if obj.parent:
             result[obj.parent].append(obj)
         else:
-            result[obj]
+            result[null_object].append(obj)
     return dict(result)

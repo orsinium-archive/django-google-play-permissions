@@ -12,6 +12,10 @@ class Permission(models.Model):
     def __str__(self):
         return self.text
 
+    @property
+    def is_category(self):
+        return not self.parent and self.permission_set.exists()
+
     def get_icon_url(self):
         if not self.parent:
             return
@@ -25,4 +29,3 @@ class App(models.Model):
 
     def __str__(self):
         return self.gplay_id
-

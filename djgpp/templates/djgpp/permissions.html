@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
 
 {% block 'content' %}
-    {% if groups %}
-        {% for group, permissions in groups.items %}
-            <div>
-                <h2>{{ group.text }}</h2>
-                {% for permission in permissions %}
-                    <p>{{ permission.text }}</p>
-                {% endfor %}
-            </div>
+  {% if groups %}
+    {% for group, permissions in groups.items %}
+      <div>
+        <h2>{{ group.text }}</h2>
+        {% for permission in permissions %}
+          <p>
+            {{ permission.text }}
+            {% if permission.description %}
+              <br/>
+              {{ permission.description }}
+            {% endif %}
+          </p>
         {% endfor %}
-    {% else %}
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="show" />
-        </form>
-    {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="show" />
+    </form>
+  {% endif %}
 {% endblock %}

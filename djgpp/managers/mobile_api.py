@@ -69,7 +69,7 @@ class MobileAPI(WebBase):
                 continue
             # save translation
             setattr(obj, 'text_{}'.format(language), self.format_name(name))
-            setattr(obj, 'description_{}'.format(language), self.format_name(name))
+            setattr(obj, 'description_{}'.format(language), self.format_name(descr))
             if commit:
                 obj.save(
                     force_update=True,

@@ -23,7 +23,7 @@ class IBase(metaclass=abc.ABCMeta):
     Any manager CAN NOT provide any other interface.
     """
     @abc.abstractmethod
-    def connect(self, app_id, language='en'):
+    def connect(self):
         """Connect to server
         """
         pass
@@ -57,7 +57,7 @@ class Base(IBase):
         app = App.objects.filter(gplay_id=app_id).first()
         if app:
             objects = list(app.permissions.all())
-            return self.translate(objects, language)
+            return self.translate(app_id, objects, language)
 
         # get from manager
         with override('en'):
