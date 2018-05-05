@@ -1,8 +1,13 @@
+# built-in
 import json
+
+# external
 import requests
-from .base import Base
+
+# app
 from ..models import Permission
 from ..utils import requests_retry_session
+from .base import Base
 
 
 TEMPLATE = '[[[163726509,[{"163726509":[[null,["$",7],[]]]}],null,null,0]]]'

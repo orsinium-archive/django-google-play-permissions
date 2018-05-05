@@ -1,7 +1,10 @@
+# built-in
+from urllib.parse import parse_qs
+
+# django
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext, ugettext_lazy
-from urllib.parse import parse_qs
 
 
 class PermissionForm(forms.Form):

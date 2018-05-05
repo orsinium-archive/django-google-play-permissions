@@ -1,7 +1,12 @@
+# built-in
 from logging import getLogger
+
+# external
 from selenium import webdriver
-from .base import Base
+
+# app
 from ..models import Permission
+from .base import Base
 
 
 URL_TEMPLATE = 'https://play.google.com/store/apps/details?id={}&hl=en'

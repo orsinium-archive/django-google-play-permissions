@@ -1,6 +1,6 @@
 # built-in
-from functools import partial
 from collections import defaultdict
+from functools import partial
 
 # external
 import requests

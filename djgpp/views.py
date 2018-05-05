@@ -1,6 +1,8 @@
 # django
-from django.views.generic import FormView
 from django.utils.translation import activate
+from django.views.generic import FormView
+
+# app
 from .forms import PermissionForm
 from .managers import PermissionManager
 from .utils import group_by_parents
