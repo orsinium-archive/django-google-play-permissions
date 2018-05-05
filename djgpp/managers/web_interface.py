@@ -1,3 +1,4 @@
+from logging import getLogger
 from selenium import webdriver
 from .base import Base
 from ..models import Permission
@@ -5,6 +6,9 @@ from ..models import Permission
 
 URL_TEMPLATE = 'https://play.google.com/store/apps/details?id={}&hl=en'
 BUTTON = 'View details'
+
+
+logger = getLogger('djgpp')
 
 
 class WebInterface(Base):
@@ -17,13 +21,16 @@ class WebInterface(Base):
         # click on button
         element = self.api.find_element_by_link_text(BUTTON)
         if not element:
+            logger.error('WebInterface: button not found.')
             return
         if element.get_property('text') != 'View details':
+            logger.error('WebInterface: invalid button.')
             return
         element.click()
         # select alert window
         windows = self.api.find_elements_by_xpath('//body/div[4]/div/div[2]/content/*/div')
         if not windows:
+            logger.error('WebInterface: alert windows not found.')
             return
         # iterate by lines
         result = []

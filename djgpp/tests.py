@@ -4,6 +4,7 @@ from django.test import TestCase
 # app
 from .management.commands.retrieve_permissions import Command
 from .managers.android_api import AndroidAPI
+from .managers.web_api import WebAPI
 from .managers.web_interface import WebInterface
 
 
@@ -75,6 +76,37 @@ class TestWebInterface(TestCase):
                 'find accounts on the device',
                 'add or remove accounts',
                 'read your own contact card',
+            ],
+        )
+        self.assertIn(block, permissions)
+
+    def test_parse(self):
+        data = self.manager.download('org.telegram.messenger')
+        permissions = self.manager.parse(data)
+        names = [permission.text for permission in permissions]
+        self.assertIn('Receive text messages (SMS)', names)
+
+        # check parents
+        for permission in permissions:
+            if permission.text == 'Receive text messages (SMS)':
+                self.assertEqual(permission.parent.text, 'SMS')
+                break
+        else:
+            self.assertTrue(False)  # permission not found
+
+
+class TestWebAPI(TestCase):
+    def setUp(self):
+        self.manager = WebAPI()
+
+    def test_download(self):
+        permissions = self.manager.download('org.telegram.messenger')
+        block = (
+            'Contacts',
+            [
+                'find accounts on the device',
+                'read your contacts',
+                'modify your contacts',
             ],
         )
         self.assertIn(block, permissions)

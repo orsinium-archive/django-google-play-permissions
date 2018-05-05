@@ -10,7 +10,6 @@ from django.utils.translation import override
 
 # app
 from ..models import App
-from ..utils import requests_retry_session
 
 
 translator = Translator()
@@ -40,9 +39,6 @@ class Base(IBase):
 
     def __init__(self, **credentials):
         self.connect(**credentials)
-
-    def connect(self, **credentials):
-        self.api = requests_retry_session()
 
     def get(self, app_id, language='en'):
         # get from database
