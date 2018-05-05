@@ -1,0 +1,10 @@
+notebooks/
+*.pyc
+*.log
+*.db
+*.egg-info
+*.sqlite3
+credentials.txt
+local.py
+Pipfile.lock
+page.png

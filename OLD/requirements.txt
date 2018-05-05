@@ -1,0 +1,8 @@
+django<2.0
+googletrans
+gpapi
+django-modeltranslation
+bs4
+requests
+selenium<=3.11.0
+
