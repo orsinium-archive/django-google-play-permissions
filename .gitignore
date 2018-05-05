@@ -6,3 +6,5 @@ notebooks/
 *.sqlite3
 credentials.txt
 local.py
+Pipfile.lock
+
