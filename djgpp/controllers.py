@@ -70,7 +70,7 @@ class PermissionController(object):
             result[obj.parent].append(obj)
         return result
 
-    def get_names(self, app_id, language):
+    def get_names(self, app_id, language='en'):
         response = self.api.post(
             self.mobile_api_url,
             data=dict(
@@ -102,7 +102,7 @@ class PermissionController(object):
     def get_groups(self, app_id, language='en'):
         response = self.api.post(
             self.web_api_url,
-            params={'hl': 'en'},
+            params={'hl': language},
             data={'f.req': self.web_api_template.replace('$', app_id)},
         )
         # strip junk from response body begining and decode
