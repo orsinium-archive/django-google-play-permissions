@@ -16,7 +16,7 @@ setup(
     keywords='django google play android permissions',
 
     packages=find_packages(),
-    requires=[line for line in open('requirements.txt').read().split('\n') if line],
+    install_requires=[line for line in open('requirements.txt').read().split('\n') if line],
 
     url='https://github.com/orsinium/django-google-play-permissions',
     download_url='https://github.com/orsinium/django-google-play-permissions/tarball/master',

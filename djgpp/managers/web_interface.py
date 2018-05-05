@@ -3,9 +3,6 @@ from .base import Base
 from ..models import Permission
 
 
-driver = webdriver.PhantomJS()
-
-
 URL_TEMPLATE = 'https://play.google.com/store/apps/details?id={}&hl=en'
 BUTTON = 'View details'
 
@@ -25,7 +22,7 @@ class WebInterface(Base):
             return
         element.click()
         # select alert window
-        windows = driver.find_elements_by_xpath('//body/div[4]/div/div[2]/content/*/div')
+        windows = self.api.find_elements_by_xpath('//body/div[4]/div/div[2]/content/*/div')
         if not windows:
             return
         # iterate by lines
@@ -46,9 +43,15 @@ class WebInterface(Base):
         return objects
 
     def get_object(self, name, group_name):
-        parent, _created = Permission.objects.get_or_create(text=group_name, parent=None)
+        parent, _created = Permission.objects.get_or_create(
+            text=self.format_name(group_name),
+            parent=None,
+        )
         obj, _created = Permission.objects.get_or_create(
             text=self.format_name(name),
             defaults=dict(parent=parent),
         )
         return obj
+
+    def format_name(self, name):
+        return name[0].upper() + name[1:]

@@ -7,7 +7,7 @@ class Permission(models.Model):
     text = models.TextField()
     description = models.TextField(blank=True, default='')
     # if parent is NULL then permission is category (root permission)
-    parent = models.ForeignKey('self', null=True)
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
 
     def get_icon_url(self):
         if not self.parent:
