@@ -57,14 +57,17 @@ class PermissionController(object):
         result = self.combine(names, names_tr, groups, groups_tr, language)
         return self.sort(result)
 
+    @staticmethod
     def get_from_database(app_id, language='en'):
-        app = App.objects.filter(app_id).first()
+        # get app
+        app = App.objects.filter(gplay_id=app_id).first()
         if not app:
             return
-        permissions = app.permissions.all()
+        # get permissions
+        permissions = app.permissions.filter(language=language)
         if not permissions:
             return
-
+        # group
         result = defaultdict(list)
         for obj in permissions:
             result[obj.parent].append(obj)

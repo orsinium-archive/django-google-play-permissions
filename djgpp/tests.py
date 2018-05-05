@@ -36,3 +36,14 @@ class TestController(TestCase):
         self.assertIn('find accounts on the device', data)
         self.assertIn('Контакты', data.values())
         self.assertIn('Другое', data.values())
+
+    def test_get(self):
+        data = self.controller.get('org.telegram.messenger', 'en')
+        self.assertIn('find accounts on the device', data)
+        self.assertIn('Contacts', data.values())
+        self.assertIn('Other', data.values())
+
+        data = self.controller.get_groups('org.telegram.messenger', 'ru')
+        self.assertIn('find accounts on the device', data)
+        self.assertIn('Контакты', data.values())
+        self.assertIn('Другое', data.values())
