@@ -1,16 +1,14 @@
 [[source]]
-verify_ssl = true
-url = "https://pypi.org/simple"
 name = "pypi"
-
-[dev-packages]
+url = "https://pypi.org/simple"
+verify_ssl = true
 
 [packages]
 googletrans = "*"
-gpapi = "*"
-django-modeltranslation = "*"
-"bs4" = "*"
 requests = "*"
-selenium = "<=3.11.0"
-Django = "<2.0"
+Django = ">=1.8"
 
+[requires]
+python_version = "3.5"
+
+[dev-packages]

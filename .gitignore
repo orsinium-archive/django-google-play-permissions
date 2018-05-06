@@ -8,3 +8,5 @@ credentials.txt
 local.py
 Pipfile.lock
 page.png
+example/project/static/
+.tox

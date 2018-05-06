@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # external
-# external
-# external
 from setuptools import find_packages, setup
 
 
@@ -18,7 +16,11 @@ setup(
     keywords='django google play android permissions',
 
     packages=find_packages(),
-    install_requires=[line for line in open('requirements.txt').read().split('\n') if line],
+    install_requires=[
+        'django>=1.8',
+        'googletrans',
+        'requests',
+    ],
 
     url='https://github.com/orsinium/django-google-play-permissions',
     download_url='https://github.com/orsinium/django-google-play-permissions/tarball/master',

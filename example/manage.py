@@ -4,6 +4,9 @@ import os
 import sys
 
 
+sys.path.append('../djgpp/')
+
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
     try:
