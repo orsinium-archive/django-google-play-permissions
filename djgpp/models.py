@@ -1,7 +1,11 @@
+import re
 # django
 from django.utils.translation import get_language
 from django.conf import settings
 from django.db import models
+
+
+REX_WORD = re.compile(r'[a-z0-9-]+')
 
 
 class Permission(models.Model):
@@ -21,10 +25,10 @@ class Permission(models.Model):
         return self.name
 
     def get_icon_url(self):
-        if not self.parent:
+        if not self.is_category:
             return
-        slug = self.name.lower.replace(' ', '_')
-        return '{}djgpp/{}.png'(settings.STATIC_URL, slug)
+        slug = REX_WORD.search(self.name.lower()).group()
+        return '{}djgpp/{}.png'.format(settings.STATIC_URL, slug)
 
 
 class Translation(models.Model):

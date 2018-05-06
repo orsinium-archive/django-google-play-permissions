@@ -4,7 +4,10 @@
   {% if groups %}
     {% for group, permissions in groups.items %}
       <div>
-        <h2>{{ group.translation.name }}</h2>
+        <h2>
+          <img src="{{ group.get_icon_url }}" width="20" height="20" />
+          {{ group.translation.name }}
+        </h2>
         {% for permission in permissions %}
           <p>
             {{ permission.translation.name }}
