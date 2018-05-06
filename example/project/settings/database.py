@@ -14,6 +14,8 @@ try:
         default='sqlite:///' + DATABASE_FILE,
         cast=dj_database_url.parse,
     )
+    if 'mysql' in DATABASES['default']['ENGINE']:
+        DATABASES['default']['OPTIONS'] = {'init_command': 'SET names utf8;'}
 except ImportError:
     # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
     DATABASES['default'] = {

@@ -1,5 +1,0 @@
-ANDROID_EMAIL = 'example@gmail.com'
-ANDROID_PASSWORD = 'YourPassw0rd'
-
-# ANDROID_GSF_ID = 0
-# ANDROID_AUTH_SUBTOKEN = ''

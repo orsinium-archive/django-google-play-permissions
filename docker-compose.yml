@@ -4,12 +4,13 @@ services:
   db:
     image: mysql:5.7
     volumes:
-      - djgppdb
+      - ./db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_USER: 'djgpp'
       MYSQL_PASSWORD: 'djgpp'
       MYSQL_DATABASE: 'djgpp'
+    command: '--character-set-server=utf8 --collation-server=utf8_general_ci'
   web:
     build: .
     ports:

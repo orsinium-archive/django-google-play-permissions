@@ -1,1 +1,1 @@
-sudo docker-compose up web
+sudo docker-compose run --service-ports web

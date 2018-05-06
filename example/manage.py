@@ -4,7 +4,6 @@ import os
 import sys
 
 
-print('RUN')
 sys.path.append('../djgpp/')
 
 
