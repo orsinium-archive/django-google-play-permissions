@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block 'content' %}
+  {% if groups %}
+    <script language='javascript'>
+      $(document).ready(function(){
+        $('.ui.accordion').accordion();
+      });
+    </script>
+    {% for group, permissions in groups.items %}
+      <div class="ui card" style="width: 100%">
+        <div class="content">
+          <div class="header">
+            <img src="{{ group.get_icon_url }}" width="20" height="20" />
+            {{ group.translation.name }}
+          </div>
+        </div>
+        <div class="content">
+          <div class="ui accordion">
+            {% for permission in permissions %}
+              <div class="title">
+                <i class="dropdown icon"></i>
+                {{ permission.translation.name }}
+              </div>
+              <div class="content">
+                <p>
+                  {{ permission.translation.description }}
+                </p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="ui middle aligned center aligned grid">
+      <div class="column">
+        <form method="POST" class="ui center">
+          {% csrf_token %}
+          <div class="ui input">
+            <input type="url" name="url" required id="id_url" placeholder="Aplication URL" />
+          </div>
+          <input type="submit" class="ui button" value="show" />
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>{% block 'title' %}djgpp demo{% endblock %}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="description" content="Django Google Play apps permissions getter demo">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" class="ui" href="https://semantic-ui.com/dist/semantic.min.css">
+
+  <script src="https://semantic-ui.com/javascript/library/jquery.min.js"></script>
+  <script src="https://semantic-ui.com/dist/semantic.min.js"></script>
+  <script src="https://semantic-ui.com/dist/components/accordion.js"></script>
+</head>
+
+<body>
+  <div class="ui text container">
+    {% block 'content' %}
+      Hello, world!
+    {% endblock %}
+  </div>
+</body>
+
+</html>
