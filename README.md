@@ -6,6 +6,8 @@ Features:
 1. Languages support.
 1. Permissions grouping
 1. Groups icons.
+1. Sorting by alphabet.
+1. Simple API.
 1. Storing and grouping permissions into database.
 1. Demo project over Docker containers with Semantic UI interface.
 

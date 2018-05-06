@@ -56,6 +56,16 @@ class PermissionController(object):
         return session
 
     def get(self, app_id, language='en'):
+        """Get permissions for app by ID and language.
+
+        1. Try to get data from database
+        2. Get permissions list
+        3. Get translated permissions.
+        4. Get permissions groups.
+        5. Get translations for groups.
+        6. Combine this data, convert to objects and save.
+        7. Sort result by alphabet.
+        """
         result = self.get_from_database(app_id, language)
         if result:
             return self.sort(result, language)
@@ -71,6 +81,8 @@ class PermissionController(object):
 
     @staticmethod
     def get_from_database(app_id, language='en'):
+        """Try to get data from database
+        """
         # get app
         app = App.objects.filter(gplay_id=app_id).first()
         if not app:
@@ -86,6 +98,8 @@ class PermissionController(object):
         return result
 
     def get_names(self, app_id, language='en'):
+        """Get permissions list (name and description) from Google server
+        """
         response = self.api.post(
             self.mobile_api_url,
             data=dict(
@@ -115,6 +129,8 @@ class PermissionController(object):
         return result
 
     def get_groups(self, app_id, language='en'):
+        """Get permissions groups from Google server
+        """
         response = self.api.post(
             self.web_api_url,
             params={'hl': language},
@@ -137,10 +153,14 @@ class PermissionController(object):
     @staticmethod
     @lru_cache(maxsize=8)
     def translate(text, language):
+        """Translate text from English by translate.google.com
+        """
         return translator.translate(text, src='en', dest=language).text
 
     @classmethod
     def combine(cls, names, names_tr, groups, groups_tr, language):
+        """Combine data, convert to objects and save.
+        """
         result = defaultdict(list)
         for (name, descr), (name_tr, descr_tr) in zip(names, names_tr):
             # get group
@@ -181,6 +201,8 @@ class PermissionController(object):
 
     @staticmethod
     def sort(data, language='en'):
+        """Sort groups and permissions by alphabet
+        """
         def key(obj):
             if obj.name == 'Other':
                 return '\xffff'

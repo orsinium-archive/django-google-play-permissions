@@ -23,6 +23,9 @@ class Permission(models.Model):
         lang = get_language()
         return self.translation_set.filter(language=lang).first()
 
+    class Meta:
+        ordering = ('name', )
+
     def __str__(self):
         return self.name
 
@@ -40,6 +43,9 @@ class Translation(models.Model):
     name = models.TextField()
     description = models.TextField(blank=True, default='')
 
+    class Meta:
+        ordering = ('name', )
+
     def __str__(self):
         return self.name
 
@@ -47,6 +53,9 @@ class Translation(models.Model):
 class App(models.Model):
     gplay_id = models.CharField(max_length=32, unique=True)
     permissions = models.ManyToManyField(Permission)
+
+    class Meta:
+        ordering = ('gplay_id', )
 
     def __str__(self):
         return self.gplay_id
