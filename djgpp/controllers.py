@@ -125,7 +125,8 @@ class PermissionController(object):
         # get only permissions lists
         data = list(data[0][2].values())[0]
         # concat permissions without group to "Other" group
-        data[1][-1][-1].extend(data[-1])
+        if len(data) > 2:
+            data[1][-1][-1].extend(data[-1])
         # get permissions
         result = {}
         for group, _info, permissions in (data[0] + data[1])[1:]:

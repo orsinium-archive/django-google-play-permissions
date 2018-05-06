@@ -1,3 +1,13 @@
+# Django Google Play permissions (djgpp)
+
+Django app for getting app permissions from Google Play.
+
+Features:
+1. Languages support.
+1. Permissions grouping
+1. Groups icons.
+1. Storing and grouping permissions into database.
+1. Demo project over Docker containers with Semantic UI interface.
 
 ## Installation
 
