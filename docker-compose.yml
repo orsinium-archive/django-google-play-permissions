@@ -1,0 +1,23 @@
+# https://github.com/mozilla/mozmoderator/blob/master/docker-compose.yml
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - djgppdb
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'djgpp'
+      MYSQL_PASSWORD: 'djgpp'
+      MYSQL_DATABASE: 'djgpp'
+  web:
+    build: .
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/opt/project
+    depends_on:
+      - db
+    environment:
+      DEBUG: 'True'
+      DATABASE_URL: 'mysql://djgpp:djgpp@db:3306/djgpp'

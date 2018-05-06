@@ -1,10 +1,22 @@
 # built-in
 import os
 
+try:
+    from decouple import config
+except ImportError:
+    def config(option, default=None, cast=str):
+        value = os.environ.get(option, None)
+        if value is None:
+            return default
+        return cast(value)
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = 'o_(og#xy@8%2dxe)!13qyf)w2esbh1@x#4qzrxnq80l43p(h6i'
-DEBUG = True
+SECRET_KEY = config(
+    'SECRET_KEY',
+    default='o_(og#xy@8%2dxe)!13qyf)w2esbh1@x#4qzrxnq80l43p(h6i'
+)
+DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -47,17 +59,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation
