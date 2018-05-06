@@ -143,9 +143,13 @@ class PermissionController(object):
         # concat permissions without group to "Other" group
         if len(data) > 2:
             data[1][-1][-1].extend(data[-1])
+        if len(data) > 1:
+            data = (data[0] or []) + (data[1] or [])
+        else:
+            data = data[0] or []
         # get permissions
         result = {}
-        for group, _info, permissions in (data[0] + data[1])[1:]:
+        for group, _info, permissions in data:
             for permission in permissions:
                 result[permission[-1]] = group
         return result
