@@ -3,8 +3,8 @@ from django.utils.translation import activate
 from django.views.generic import FormView
 
 # app
-from .forms import PermissionForm
 from .controllers import PermissionController
+from .forms import PermissionForm
 
 
 class PermissionView(FormView):

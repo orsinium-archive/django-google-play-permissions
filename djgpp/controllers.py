@@ -1,11 +1,18 @@
-from collections import defaultdict, OrderedDict
-from functools import lru_cache
-import requests
+# built-in
 import json
-from googletrans import Translator
+from collections import OrderedDict, defaultdict
+from functools import lru_cache
+
+# external
+import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from .models import Permission, Translation, App
+
+# project
+from googletrans import Translator
+
+# app
+from .models import App, Permission, Translation
 
 
 translator = Translator()

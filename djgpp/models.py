@@ -1,8 +1,10 @@
+# built-in
 import re
+
 # django
-from django.utils.translation import get_language
 from django.conf import settings
 from django.db import models
+from django.utils.translation import get_language
 
 
 REX_WORD = re.compile(r'[a-z0-9-]+')
